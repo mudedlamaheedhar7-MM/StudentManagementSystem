@@ -1,3 +1,5 @@
+print("Student Management System Started Successfully!")
+
 from pymongo import MongoClient
 
 client = MongoClient("mongodb://localhost:27017/")
