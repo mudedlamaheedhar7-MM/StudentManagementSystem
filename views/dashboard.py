@@ -1,5 +1,9 @@
 import customtkinter as ctk
 
+from views.components.sidebar import Sidebar
+from views.components.header import Header
+from views.components.stat_card import StatCard
+
 
 class DashboardWindow:
 
@@ -8,158 +12,115 @@ class DashboardWindow:
         self.root = root
         self.username = username
 
-        self.create_dashboard()
+        self.build_dashboard()
 
-    def create_dashboard(self):
+    def build_dashboard(self):
 
-        # Clear Login Screen
+        # Remove Login Screen
         for widget in self.root.winfo_children():
             widget.destroy()
 
-        self.root.title("Student Management System - Dashboard")
+        self.root.title("Student Management System")
 
-        ###################################################
-        # Configure Grid
-        ###################################################
+        ##################################################
+        # Root Grid
+        ##################################################
 
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
 
-        ###################################################
+        ##################################################
         # Sidebar
-        ###################################################
+        ##################################################
 
-        sidebar = ctk.CTkFrame(
-            self.root,
-            width=220,
-            corner_radius=0
+        self.sidebar = Sidebar(self.root)
+
+        self.sidebar.grid(
+            row=0,
+            column=0,
+            sticky="ns"
         )
 
-        sidebar.grid(row=0, column=0, sticky="ns")
+        ##################################################
+        # Main Frame
+        ##################################################
 
-        title = ctk.CTkLabel(
-            sidebar,
-            text="🎓\nStudent\nManagement",
-            font=("Arial", 24, "bold")
-        )
-
-        title.pack(pady=30)
-
-        menu = [
-            "Dashboard",
-            "Students",
-            "Faculty",
-            "Attendance",
-            "Fees",
-            "Courses",
-            "Reports",
-            "Settings"
-        ]
-
-        for item in menu:
-
-            button = ctk.CTkButton(
-                sidebar,
-                text=item,
-                width=180
-            )
-
-            button.pack(pady=8)
-
-        ###################################################
-        # Main Area
-        ###################################################
-
-        main = ctk.CTkFrame(
+        self.main = ctk.CTkFrame(
             self.root,
             corner_radius=0
         )
 
-        main.grid(
+        self.main.grid(
             row=0,
             column=1,
             sticky="nsew"
         )
 
-        ###################################################
+        self.main.grid_rowconfigure(1, weight=1)
+        self.main.grid_columnconfigure(0, weight=1)
+
+        ##################################################
         # Header
-        ###################################################
+        ##################################################
 
-        header = ctk.CTkFrame(
-            main,
-            height=70
+        self.header = Header(
+            self.main,
+            self.username
         )
 
-        header.pack(fill="x")
-
-        welcome = ctk.CTkLabel(
-            header,
-            text=f"Welcome, {self.username}",
-            font=("Arial", 22, "bold")
+        self.header.grid(
+            row=0,
+            column=0,
+            sticky="ew"
         )
 
-        welcome.pack(
-            side="left",
+        ##################################################
+        # Dashboard Content
+        ##################################################
+
+        content = ctk.CTkFrame(
+            self.main
+        )
+
+        content.grid(
+            row=1,
+            column=0,
+            sticky="nsew",
             padx=20,
             pady=20
         )
 
-        logout = ctk.CTkButton(
-            header,
-            text="Logout",
-            width=100
-        )
+        ##################################################
+        # Statistics Cards
+        ##################################################
 
-        logout.pack(
-            side="right",
-            padx=20
-        )
+        content.grid_columnconfigure((0,1,2,3), weight=1)
 
-        ###################################################
-        # Statistics
-        ###################################################
-
-        cards = ctk.CTkFrame(main)
-
-        cards.pack(
-            fill="both",
-            expand=True,
-            padx=20,
-            pady=20
-        )
-
-        titles = [
+        student_card = StatCard(
+            content,
             "Students",
+            "0"
+        )
+
+        faculty_card = StatCard(
+            content,
             "Faculty",
+            "0"
+        )
+
+        course_card = StatCard(
+            content,
             "Courses",
-            "Pending Fees"
-        ]
+            "0"
+        )
 
-        for index, title in enumerate(titles):
+        fee_card = StatCard(
+            content,
+            "Pending Fees",
+            "₹0"
+        )
 
-            card = ctk.CTkFrame(
-                cards,
-                width=220,
-                height=150
-            )
-
-            card.grid(
-                row=0,
-                column=index,
-                padx=10,
-                pady=10
-            )
-
-            card.grid_propagate(False)
-
-            ctk.CTkLabel(
-                card,
-                text=title,
-                font=("Arial",18,"bold")
-            ).pack(pady=20)
-
-            ctk.CTkLabel(
-                card,
-                text="0",
-                font=("Arial",32)
-            ).pack()
+        student_card.grid(row=0, column=0, padx=10, pady=10)
+        faculty_card.grid(row=0, column=1, padx=10, pady=10)
+        course_card.grid(row=0, column=2, padx=10, pady=10)
+        fee_card.grid(row=0, column=3, padx=10, pady=10)

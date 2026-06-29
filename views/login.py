@@ -1,8 +1,8 @@
-from views.dashboard import DashboardWindow
 import customtkinter as ctk
 from tkinter import messagebox
 
 from controllers.login_controller import LoginController
+from views.dashboard import DashboardWindow
 
 
 class LoginWindow:
@@ -95,21 +95,19 @@ class LoginWindow:
         role = self.role.get()
 
         authenticated = LoginController.authenticate(
-            username,
-            password,
-            role
-        )
+        username,
+        password,
+        role
+    )
 
         if authenticated:
-
             DashboardWindow(
             self.root,
             username
-    )
-            
-            
+        )
+
         else:
-            messagebox.showerror(
-                "Login",
-                "Invalid Username or Password"
-            )
+             messagebox.showerror(
+            "Login",
+            "Invalid Username or Password"
+        )
