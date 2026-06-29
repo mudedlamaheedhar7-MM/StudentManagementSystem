@@ -49,3 +49,29 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+import customtkinter as ctk
+
+from config import *
+from database.mongodb import mongodb
+from views.login import LoginWindow
+
+
+def main():
+    mongodb.connect()
+
+    ctk.set_appearance_mode(THEME)
+    ctk.set_default_color_theme(COLOR_THEME)
+
+    app = ctk.CTk()
+
+    app.title(APP_NAME)
+    app.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
+
+    LoginWindow(app)
+
+    app.mainloop()
+
+
+if __name__ == "__main__":
+    main()

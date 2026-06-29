@@ -5,6 +5,8 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client["student_management_system"]
 
 print("MongoDB Connected Successfully!")
+
+
 from pymongo import MongoClient
 from config import MONGO_URI, DATABASE_NAME
 
