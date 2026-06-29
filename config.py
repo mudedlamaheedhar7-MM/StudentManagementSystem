@@ -23,3 +23,13 @@ DATABASE_NAME = "student_management_system"
 
 THEME = "dark"      # dark / light
 COLOR_THEME = "blue"
+
+
+# Login Window
+
+LEFT_PANEL_COLOR = "#1E3A5F"
+RIGHT_PANEL_COLOR = "#2B2B2B"
+
+FONT_TITLE = ("Arial", 30, "bold")
+FONT_SUBTITLE = ("Arial", 18)
+FONT_NORMAL = ("Arial", 14)

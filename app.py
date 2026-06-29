@@ -1,13 +1,3 @@
-print("Student Management System Started Successfully!")
-
-from pymongo import MongoClient
-
-client = MongoClient("mongodb://localhost:27017/")
-
-db = client["student_management_system"]
-
-print("MongoDB Connected Successfully!")
-
 import customtkinter as ctk
 
 from config import (
@@ -19,6 +9,7 @@ from config import (
 )
 
 from database.mongodb import mongodb
+from views.login import LoginWindow
 
 
 def main():
@@ -26,48 +17,17 @@ def main():
     # Connect to MongoDB
     mongodb.connect()
 
-    # Theme
+    # Set application theme
     ctk.set_appearance_mode(THEME)
     ctk.set_default_color_theme(COLOR_THEME)
 
-    # Main Window
+    # Create main window
     app = ctk.CTk()
 
     app.title(APP_NAME)
     app.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
 
-    label = ctk.CTkLabel(
-        app,
-        text="Student Management System",
-        font=("Arial", 28, "bold")
-    )
-
-    label.pack(pady=80)
-
-    app.mainloop()
-
-
-if __name__ == "__main__":
-    main()
-
-import customtkinter as ctk
-
-from config import *
-from database.mongodb import mongodb
-from views.login import LoginWindow
-
-
-def main():
-    mongodb.connect()
-
-    ctk.set_appearance_mode(THEME)
-    ctk.set_default_color_theme(COLOR_THEME)
-
-    app = ctk.CTk()
-
-    app.title(APP_NAME)
-    app.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
-
+    # Open Login Screen
     LoginWindow(app)
 
     app.mainloop()
