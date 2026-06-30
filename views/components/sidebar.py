@@ -3,7 +3,7 @@ import customtkinter as ctk
 
 class Sidebar(ctk.CTkFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, callback):
 
         super().__init__(
             parent,
@@ -11,13 +11,14 @@ class Sidebar(ctk.CTkFrame):
             corner_radius=0
         )
 
+        self.callback = callback
+
         self.pack_propagate(False)
 
         self.build_sidebar()
 
     def build_sidebar(self):
 
-        # Logo / Title
         title = ctk.CTkLabel(
             self,
             text="🎓\n\nStudent\nManagement\nSystem",
@@ -27,7 +28,6 @@ class Sidebar(ctk.CTkFrame):
 
         title.pack(pady=30)
 
-        # Navigation Buttons
         menu_items = [
             "Dashboard",
             "Students",
@@ -39,17 +39,13 @@ class Sidebar(ctk.CTkFrame):
             "Settings"
         ]
 
-        self.buttons = {}
-
         for item in menu_items:
 
             button = ctk.CTkButton(
                 self,
                 text=item,
                 width=180,
-                height=40
+                command=lambda page=item: self.callback(page)
             )
 
             button.pack(pady=6)
-
-            self.buttons[item] = button

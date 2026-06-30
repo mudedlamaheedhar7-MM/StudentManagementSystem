@@ -2,7 +2,9 @@ import customtkinter as ctk
 
 from views.components.sidebar import Sidebar
 from views.components.header import Header
-from views.components.stat_card import StatCard
+
+from views.pages.dashboard_page import DashboardPage
+from views.pages.student_list_page import StudentListPage
 
 
 class DashboardWindow:
@@ -12,28 +14,33 @@ class DashboardWindow:
         self.root = root
         self.username = username
 
+        self.current_page = None
+
         self.build_dashboard()
 
     def build_dashboard(self):
 
-        # Remove Login Screen
+        # Clear Login Screen
         for widget in self.root.winfo_children():
             widget.destroy()
 
         self.root.title("Student Management System")
 
-        ##################################################
+        #################################################
         # Root Grid
-        ##################################################
+        #################################################
 
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
 
-        ##################################################
+        #################################################
         # Sidebar
-        ##################################################
+        #################################################
 
-        self.sidebar = Sidebar(self.root)
+        self.sidebar = Sidebar(
+            self.root,
+            self.show_page
+        )
 
         self.sidebar.grid(
             row=0,
@@ -41,9 +48,9 @@ class DashboardWindow:
             sticky="ns"
         )
 
-        ##################################################
+        #################################################
         # Main Frame
-        ##################################################
+        #################################################
 
         self.main = ctk.CTkFrame(
             self.root,
@@ -59,9 +66,9 @@ class DashboardWindow:
         self.main.grid_rowconfigure(1, weight=1)
         self.main.grid_columnconfigure(0, weight=1)
 
-        ##################################################
+        #################################################
         # Header
-        ##################################################
+        #################################################
 
         self.header = Header(
             self.main,
@@ -74,53 +81,66 @@ class DashboardWindow:
             sticky="ew"
         )
 
-        ##################################################
-        # Dashboard Content
-        ##################################################
+        #################################################
+        # Content Area
+        #################################################
 
-        content = ctk.CTkFrame(
+        self.content = ctk.CTkFrame(
             self.main
         )
 
-        content.grid(
+        self.content.grid(
             row=1,
             column=0,
-            sticky="nsew",
-            padx=20,
-            pady=20
+            sticky="nsew"
         )
 
-        ##################################################
-        # Statistics Cards
-        ##################################################
+        self.content.grid_rowconfigure(0, weight=1)
+        self.content.grid_columnconfigure(0, weight=1)
 
-        content.grid_columnconfigure((0,1,2,3), weight=1)
+        #################################################
+        # Default Page
+        #################################################
 
-        student_card = StatCard(
-            content,
-            "Students",
-            "0"
+        self.show_page("Dashboard")
+
+    #################################################
+    # Page Navigation
+    #################################################
+
+    def show_page(self, page_name):
+
+        if self.current_page is not None:
+            self.current_page.destroy()
+
+        if page_name == "Dashboard":
+
+            self.current_page = DashboardPage(
+                self.content
+            )
+
+        elif page_name == "Students":
+
+            self.current_page = StudentListPage(
+                self.content
+            )
+
+        else:
+
+            self.current_page = ctk.CTkFrame(
+                self.content
+            )
+
+            label = ctk.CTkLabel(
+                self.current_page,
+                text=f"{page_name}\nComing Soon",
+                font=("Arial", 24, "bold")
+            )
+
+            label.pack(expand=True)
+
+        self.current_page.grid(
+            row=0,
+            column=0,
+            sticky="nsew"
         )
-
-        faculty_card = StatCard(
-            content,
-            "Faculty",
-            "0"
-        )
-
-        course_card = StatCard(
-            content,
-            "Courses",
-            "0"
-        )
-
-        fee_card = StatCard(
-            content,
-            "Pending Fees",
-            "₹0"
-        )
-
-        student_card.grid(row=0, column=0, padx=10, pady=10)
-        faculty_card.grid(row=0, column=1, padx=10, pady=10)
-        course_card.grid(row=0, column=2, padx=10, pady=10)
-        fee_card.grid(row=0, column=3, padx=10, pady=10)
