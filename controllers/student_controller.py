@@ -5,7 +5,8 @@ class StudentController:
 
     @staticmethod
     def save_student(student):
+        return StudentService.create_student(student)
 
-        return StudentService.create_student(
-            student
-        )
+    @staticmethod
+    def get_all_students():
+        return StudentService.get_all_students()

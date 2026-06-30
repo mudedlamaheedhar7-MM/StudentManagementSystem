@@ -1,4 +1,8 @@
 import customtkinter as ctk
+from tkinter import ttk
+
+from controllers.student_controller import StudentController
+import customtkinter as ctk
 
 
 class StudentListPage(ctk.CTkFrame):
