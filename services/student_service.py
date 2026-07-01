@@ -27,7 +27,20 @@ class StudentService:
         return True
 
     @staticmethod
-        
+    def get_all_students():
+
+        collection = StudentService.get_collection()
+
+        students = list(
+            collection.find(
+                {},
+                {"_id": 0}
+            )
+        )
+
+        return students
+
+    @staticmethod
     def generate_student_id():
 
         collection = StudentService.get_collection()

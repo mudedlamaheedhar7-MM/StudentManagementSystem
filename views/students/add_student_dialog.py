@@ -2,6 +2,8 @@ import customtkinter as ctk
 from tkinter import messagebox
 
 from views.components.form_builder import FormBuilder
+from models.student import Student
+from controllers.student_controller import StudentController
 
 
 class AddStudentDialog(ctk.CTkToplevel):
@@ -13,9 +15,10 @@ class AddStudentDialog(ctk.CTkToplevel):
         self.parent = parent
 
         self.title("Add Student")
-        self.geometry("650x650")
+        self.geometry("650x700")
         self.resizable(False, False)
 
+        # Make dialog modal
         self.grab_set()
 
         self.build()
@@ -48,27 +51,73 @@ class AddStudentDialog(ctk.CTkToplevel):
             fields
         )
 
-        save_btn = ctk.CTkButton(
+        save_button = ctk.CTkButton(
             self,
             text="💾 Save Student",
+            width=250,
             command=self.save_student
         )
 
-        save_btn.pack(pady=20)
+        save_button.pack(pady=20)
 
     def save_student(self):
 
-        data = {}
+        try:
 
-        for label, widget in self.fields.items():
-            data[label] = widget.get()
+            student = Student(
 
-        print("Student Data")
+                student_id=StudentController.generate_student_id(),
 
-        for key, value in data.items():
-            print(f"{key}: {value}")
+                admission_no=self.fields["Admission No"].get(),
 
-        messagebox.showinfo(
-            "Success",
-            "Form captured successfully!\n\nDatabase connection comes next."
-        )
+                first_name=self.fields["First Name"].get(),
+
+                last_name=self.fields["Last Name"].get(),
+
+                gender=self.fields["Gender"].get(),
+
+                dob="",
+
+                phone=self.fields["Phone"].get(),
+
+                email=self.fields["Email"].get(),
+
+                address="",
+
+                course=self.fields["Course"].get(),
+
+                department=self.fields["Department"].get(),
+
+                semester=int(self.fields["Semester"].get()),
+
+                batch=self.fields["Batch"].get()
+            )
+
+            saved = StudentController.save_student(student)
+
+            if saved:
+
+                messagebox.showinfo(
+                    "Success",
+                    "Student added successfully!"
+                )
+
+                # Refresh Student List
+                self.parent.load_students()
+
+                # Close dialog
+                self.destroy()
+
+            else:
+
+                messagebox.showerror(
+                    "Error",
+                    "Student already exists."
+                )
+
+        except Exception as error:
+
+            messagebox.showerror(
+                "Error",
+                str(error)
+            )
