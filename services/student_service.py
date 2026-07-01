@@ -27,15 +27,23 @@ class StudentService:
         return True
 
     @staticmethod
-    def get_all_students():
+        
+    def generate_student_id():
 
         collection = StudentService.get_collection()
 
-        students = list(
-            collection.find(
-                {},
-                {"_id": 0}
-            )
+        last_student = collection.find_one(
+            {},
+            sort=[("student_id", -1)]
         )
 
-        return students
+        if not last_student:
+            return "SMS0001"
+
+        last_id = last_student["student_id"]
+
+        number = int(last_id.replace("SMS", ""))
+
+        number += 1
+
+        return f"SMS{number:04d}"

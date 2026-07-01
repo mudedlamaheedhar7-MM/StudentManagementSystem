@@ -10,3 +10,7 @@ class StudentController:
     @staticmethod
     def get_all_students():
         return StudentService.get_all_students()
+
+    @staticmethod
+    def generate_student_id():
+        return StudentService.generate_student_id()
