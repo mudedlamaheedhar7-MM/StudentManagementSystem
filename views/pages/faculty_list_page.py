@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 
 from controllers.faculty_controller import FacultyController
 from views.faculty.add_faculty_dialog import AddFacultyDialog
+from views.faculty.edit_faculty_dialog import EditFacultyDialog
 
 
 class FacultyListPage(ctk.CTkFrame):
@@ -14,10 +15,10 @@ class FacultyListPage(ctk.CTkFrame):
         self.load_faculty()
 
     # --------------------------------------------------
+    # Build UI
+    # --------------------------------------------------
 
     def build(self):
-
-        # ---------------- Title ----------------
 
         title = ctk.CTkLabel(
             self,
@@ -50,6 +51,13 @@ class FacultyListPage(ctk.CTkFrame):
         self.search_entry.pack(
             side="left",
             padx=10
+        )
+
+        # Live Search
+
+        self.search_entry.bind(
+            "<KeyRelease>",
+            self.search_faculty
         )
 
         refresh_btn = ctk.CTkButton(
@@ -134,19 +142,21 @@ class FacultyListPage(ctk.CTkFrame):
             pady=20
         )
 
+        # Double Click
+
         self.table.bind(
             "<Double-1>",
             self.on_double_click
         )
 
     # --------------------------------------------------
+    # Populate Table
+    # --------------------------------------------------
 
-    def load_faculty(self):
+    def populate_table(self, faculty_members):
 
         for row in self.table.get_children():
             self.table.delete(row)
-
-        faculty_members = FacultyController.get_all_faculty()
 
         for faculty in faculty_members:
 
@@ -164,25 +174,112 @@ class FacultyListPage(ctk.CTkFrame):
             )
 
     # --------------------------------------------------
+    # Load Faculty
+    # --------------------------------------------------
+
+    def load_faculty(self):
+
+        faculty_members = FacultyController.get_all_faculty()
+
+        self.populate_table(
+            faculty_members
+        )
+
+    # --------------------------------------------------
+    # Search Faculty
+    # --------------------------------------------------
+
+    def search_faculty(self, event):
+
+        keyword = self.search_entry.get().strip()
+
+        if keyword == "":
+
+            self.load_faculty()
+            return
+
+        faculty_members = FacultyController.search_faculty(
+            keyword
+        )
+
+        self.populate_table(
+            faculty_members
+        )
+
+    # --------------------------------------------------
+    # Add Faculty
+    # --------------------------------------------------
 
     def open_add_dialog(self):
 
         AddFacultyDialog(self)
 
     # --------------------------------------------------
+    # Delete Faculty
+    # --------------------------------------------------
 
     def delete_faculty(self):
 
-        messagebox.showinfo(
-            "Coming Soon",
-            "Delete Faculty will be implemented in Sprint 5.2."
+        selected = self.table.focus()
+
+        if not selected:
+
+            messagebox.showwarning(
+                "No Selection",
+                "Please select a faculty member to delete."
+            )
+
+            return
+
+        values = self.table.item(selected)["values"]
+
+        faculty_id = values[0]
+        faculty_name = values[2]
+
+        confirm = messagebox.askyesno(
+            "Delete Faculty",
+            f"Are you sure you want to delete\n\n{faculty_name} ({faculty_id})?"
         )
 
+        if not confirm:
+            return
+
+        deleted = FacultyController.delete_faculty(
+            faculty_id
+        )
+
+        if deleted:
+
+            messagebox.showinfo(
+                "Success",
+                "Faculty deleted successfully!"
+            )
+
+            self.load_faculty()
+
+        else:
+
+            messagebox.showerror(
+                "Error",
+                "Failed to delete faculty."
+            )
+
+    # --------------------------------------------------
+    # Double Click -> Edit Faculty
     # --------------------------------------------------
 
     def on_double_click(self, event):
 
-        messagebox.showinfo(
-            "Coming Soon",
-            "Edit Faculty will be implemented in Sprint 5.2."
+        selected = self.table.focus()
+
+        if not selected:
+            return
+
+        values = self.table.item(selected)["values"]
+
+        faculty_id = values[0]
+
+        EditFacultyDialog(
+            self,
+            faculty_id
         )
