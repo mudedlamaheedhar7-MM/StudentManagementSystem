@@ -1,8 +1,9 @@
 import customtkinter as ctk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 from controllers.student_controller import StudentController
 from views.students.add_student_dialog import AddStudentDialog
+from views.students.edit_student_dialog import EditStudentDialog
 
 
 class StudentListPage(ctk.CTkFrame):
@@ -22,35 +23,76 @@ class StudentListPage(ctk.CTkFrame):
             text="Student List",
             font=("Arial", 24, "bold")
         )
-        title.pack(anchor="w", padx=20, pady=(20, 10))
+
+        title.pack(
+            anchor="w",
+            padx=20,
+            pady=(20, 10)
+        )
 
         # ---------------- Top Bar ----------------
 
         top_frame = ctk.CTkFrame(self)
-        top_frame.pack(fill="x", padx=20, pady=10)
+
+        top_frame.pack(
+            fill="x",
+            padx=20,
+            pady=10
+        )
 
         self.search_entry = ctk.CTkEntry(
             top_frame,
             width=300,
             placeholder_text="Search Student..."
         )
-        self.search_entry.pack(side="left", padx=10)
+
+        self.search_entry.pack(
+            side="left",
+            padx=10
+        )
+
+        # ✅ Live Search
+        self.search_entry.bind(
+            "<KeyRelease>",
+            self.search_students
+        )
 
         refresh_btn = ctk.CTkButton(
             top_frame,
             text="Refresh",
             command=self.load_students
         )
-        refresh_btn.pack(side="right", padx=10)
+
+        refresh_btn.pack(
+            side="right",
+            padx=10
+        )
 
         add_btn = ctk.CTkButton(
             top_frame,
             text="➕ Add Student",
             command=self.open_add_dialog
         )
-        add_btn.pack(side="right", padx=10)
 
-        # ---------------- Table ----------------
+        add_btn.pack(
+            side="right",
+            padx=10
+        )
+
+        delete_btn = ctk.CTkButton(
+            top_frame,
+            text="🗑 Delete Student",
+            fg_color="red",
+            hover_color="darkred",
+            command=self.delete_student
+        )
+
+        delete_btn.pack(
+            side="right",
+            padx=10
+        )
+
+        # ---------------- Student Table ----------------
 
         columns = (
             "student_id",
@@ -82,8 +124,14 @@ class StudentListPage(ctk.CTkFrame):
         }
 
         for key, value in headings.items():
+
             self.table.heading(key, text=value)
-            self.table.column(key, width=120, anchor="center")
+
+            self.table.column(
+                key,
+                width=120,
+                anchor="center"
+            )
 
         self.table.pack(
             fill="both",
@@ -92,12 +140,19 @@ class StudentListPage(ctk.CTkFrame):
             pady=20
         )
 
-    def load_students(self):
+        # ---------------- Double Click ----------------
+
+        self.table.bind(
+            "<Double-1>",
+            self.on_double_click
+        )
+
+    # ---------------------------------------------------
+
+    def populate_table(self, students):
 
         for row in self.table.get_children():
             self.table.delete(row)
-
-        students = StudentController.get_all_students()
 
         for student in students:
 
@@ -116,5 +171,94 @@ class StudentListPage(ctk.CTkFrame):
                 )
             )
 
+    # ---------------------------------------------------
+
+    def load_students(self):
+
+        students = StudentController.get_all_students()
+
+        self.populate_table(students)
+
+    # ---------------------------------------------------
+
+    def search_students(self, event):
+
+        keyword = self.search_entry.get().strip()
+
+        if keyword == "":
+
+            self.load_students()
+            return
+
+        students = StudentController.search_students(keyword)
+
+        self.populate_table(students)
+
+    # ---------------------------------------------------
+
     def open_add_dialog(self):
+
         AddStudentDialog(self)
+
+    # ---------------------------------------------------
+
+    def on_double_click(self, event):
+
+        selected = self.table.focus()
+
+        if not selected:
+            return
+
+        values = self.table.item(selected)["values"]
+
+        student_id = values[0]
+
+        EditStudentDialog(
+            self,
+            student_id
+        )
+
+    # ---------------------------------------------------
+
+    def delete_student(self):
+
+        selected = self.table.focus()
+
+        if not selected:
+
+            messagebox.showwarning(
+                "No Selection",
+                "Please select a student to delete."
+            )
+
+            return
+
+        values = self.table.item(selected)["values"]
+
+        student_id = values[0]
+
+        confirm = messagebox.askyesno(
+            "Delete Student",
+            f"Are you sure you want to delete\n\n{student_id}?"
+        )
+
+        if not confirm:
+            return
+
+        deleted = StudentController.delete_student(student_id)
+
+        if deleted:
+
+            messagebox.showinfo(
+                "Success",
+                "Student deleted successfully!"
+            )
+
+            self.load_students()
+
+        else:
+
+            messagebox.showerror(
+                "Error",
+                "Failed to delete student."
+            )
