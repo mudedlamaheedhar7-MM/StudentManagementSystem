@@ -5,6 +5,7 @@ from views.components.header import Header
 
 from views.pages.dashboard_page import DashboardPage
 from views.pages.student_list_page import StudentListPage
+from views.pages.faculty_list_page import FacultyListPage
 
 
 class DashboardWindow:
@@ -122,6 +123,12 @@ class DashboardWindow:
         elif page_name == "Students":
 
             self.current_page = StudentListPage(
+                self.content
+            )
+
+        elif page_name == "Faculty":
+
+            self.current_page = FacultyListPage(
                 self.content
             )
 
