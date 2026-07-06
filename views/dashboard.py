@@ -7,6 +7,7 @@ from views.pages.dashboard_page import DashboardPage
 from views.pages.student_list_page import StudentListPage
 from views.pages.faculty_list_page import FacultyListPage
 from views.pages.course_list_page import CourseListPage
+from views.pages.attendance_page import AttendancePage
 
 
 class DashboardWindow:
@@ -136,6 +137,12 @@ class DashboardWindow:
         elif page_name == "Courses":
 
             self.current_page = CourseListPage(
+                self.content
+            )
+
+        elif page_name == "Attendance":
+
+            self.current_page = AttendancePage(
                 self.content
             )
 
