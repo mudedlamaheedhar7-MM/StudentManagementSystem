@@ -7,15 +7,20 @@ class Sidebar(ctk.CTkFrame):
 
         super().__init__(
             parent,
-            width=220,
+            width=260,
             corner_radius=0
         )
 
         self.callback = callback
 
-        self.pack_propagate(False)
+        # Keep sidebar at a fixed width
+        self.grid_propagate(False)
 
         self.build_sidebar()
+
+    # --------------------------------------------------
+    # Build Sidebar
+    # --------------------------------------------------
 
     def build_sidebar(self):
 
@@ -26,7 +31,9 @@ class Sidebar(ctk.CTkFrame):
             justify="center"
         )
 
-        title.pack(pady=30)
+        title.pack(
+            pady=(30, 40)
+        )
 
         menu_items = [
             "Dashboard",
@@ -44,8 +51,13 @@ class Sidebar(ctk.CTkFrame):
             button = ctk.CTkButton(
                 self,
                 text=item,
-                width=180,
+                width=220,
+                height=40,
                 command=lambda page=item: self.callback(page)
             )
 
-            button.pack(pady=6)
+            button.pack(
+                padx=20,
+                pady=6,
+                fill="x"
+            )

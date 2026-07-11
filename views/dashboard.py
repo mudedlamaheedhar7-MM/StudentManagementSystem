@@ -8,6 +8,7 @@ from views.pages.student_list_page import StudentListPage
 from views.pages.faculty_list_page import FacultyListPage
 from views.pages.course_list_page import CourseListPage
 from views.pages.attendance_page import AttendancePage
+from views.pages.fee_page import FeePage
 
 
 class DashboardWindow:
@@ -20,6 +21,10 @@ class DashboardWindow:
         self.current_page = None
 
         self.build_dashboard()
+
+    # --------------------------------------------------
+    # Build Dashboard
+    # --------------------------------------------------
 
     def build_dashboard(self):
 
@@ -107,9 +112,9 @@ class DashboardWindow:
 
         self.show_page("Dashboard")
 
-    #################################################
+    # --------------------------------------------------
     # Page Navigation
-    #################################################
+    # --------------------------------------------------
 
     def show_page(self, page_name):
 
@@ -134,15 +139,21 @@ class DashboardWindow:
                 self.content
             )
 
-        elif page_name == "Courses":
-
-            self.current_page = CourseListPage(
-                self.content
-            )
-
         elif page_name == "Attendance":
 
             self.current_page = AttendancePage(
+                self.content
+            )
+
+        elif page_name == "Fees":
+
+            self.current_page = FeePage(
+                self.content
+            )
+
+        elif page_name == "Courses":
+
+            self.current_page = CourseListPage(
                 self.content
             )
 
